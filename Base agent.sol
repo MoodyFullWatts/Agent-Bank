@@ -33,11 +33,21 @@ contract BaseAgent {
         return string(abi.encodePacked("Calling ", toolName, " with ", input));
     }
 
-    function sendMessage(address targetAgent, string memory message) public onlyOwner {
+    function sendMessage(address targetAgent, string memory message) public onlyOwner returns (bool) {
+        if (targetAgent == address(0)) {
+            return false; // Fail if target address is invalid
+        }
         agentMessages[targetAgent] = message;
+        return true; // Confirm success
     }
 
     function getMessages(address targetAgent) public view returns (string memory) {
         return agentMessages[targetAgent];
+    }
+
+    function fetchExternalData(uint256 requestId, string memory dataSource) public onlyOwner returns (uint256) {
+        // Placeholder: simulate fetching data from an oracle
+        agentData[requestId] = dataSource; // Store the data under the request ID
+        return requestId;
     }
 }
