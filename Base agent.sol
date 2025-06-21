@@ -1,10 +1,10 @@
-pragma solidity 0.8.0;
+pragma solidity ^0.8.0;
 
 contract BaseAgent {
     string public agentName;
-(mapping(address => string) public agentMessages;)
     address public owner;
     mapping(uint => string) public agentData;
+    mapping(address => string) public agentMessages; // Fixed syntax: curly braces, not parentheses
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -16,7 +16,7 @@ contract BaseAgent {
         agentName = name;
     }
 
-    function updateName(string memory newName) public only owner {
+    function updateName(string memory newName) public onlyOwner {
         agentName = newName;
     }
 
@@ -25,11 +25,19 @@ contract BaseAgent {
         return address(newAgent);
     }
 
-    function storeAgentData(uint id, string memory data) public only owner {
+    function storeAgentData(uint id, string memory data) public onlyOwner {
         agentData[id] = data;
     }
 
     function callTool(string memory toolName, string memory input) public returns (string memory) {
         return string(abi.encodePacked("Calling ", toolName, " with ", input));
     }
-function sendMessage(address targetAgent, string memory message) public onlyOwner returns (uint) { agentMessages.push(message); return agentMessages.length - 1; // Return the index of the new message } function getMessages(address targetAgent) public view returns (string memory) { return agentMessages; }}
+
+    function sendMessage(address targetAgent, string memory message) public onlyOwner {
+        agentMessages[targetAgent] = message; // Store message for the target agent
+    }
+
+    function getMessages(address targetAgent) public view returns (string memory) {
+        return agentMessages[targetAgent]; // Return the message for the target agent
+    }
+}
