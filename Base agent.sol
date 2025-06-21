@@ -13,4 +13,8 @@ contract BaseAgent {
 function createNewAgent(string memory newAgentName) public returns (address) {
     BaseAgent newAgent = new BaseAgent(newAgentName);
     return address(newAgent);
+mapping(uint => string) public agentData;
+
+function storeAgentData(uint id, string memory data) public {
+    agentData[id] = data;
 }}
