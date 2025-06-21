@@ -14,5 +14,3 @@ function createNewAgent(string memory newAgentName) public returns (address) {
     BaseAgent newAgent = new BaseAgent(newAgentName);
     return address(newAgent);
 }}
-
-b
