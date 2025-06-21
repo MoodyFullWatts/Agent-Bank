@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.0;
 
 contract BaseAgent {
@@ -20,9 +21,8 @@ contract BaseAgent {
         agentName = newName;
     }
 
-    function createNewAgent(string memory newAgentName) public returns (address) {
-        BaseAgent newAgent = new BaseAgent(newAgentName);
-        return address(newAgent);
+    function createNewAgent(string memory newAgentName) public onlyOwner returns (address) {
+        return address(new BaseAgent(newAgentName));
     }
 
     function storeAgentData(uint id, string memory data) public onlyOwner {
