@@ -17,4 +17,6 @@ mapping(uint => string) public agentData;
 
 function storeAgentData(uint id, string memory data) public {
     agentData[id] = data;
+}function callTool(string memory toolName, string memory input) public returns (string memory) {
+    return string(abi.encodePacked("Calling ", toolName, " with ", input));
 }}
