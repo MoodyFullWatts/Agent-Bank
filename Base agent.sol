@@ -2,6 +2,7 @@ pragma solidity 0.8.0;
 
 contract BaseAgent {
     string public agentName;
+(mapping(address => string) public agentMessages;)
     address public owner;
     mapping(uint => string) public agentData;
 
@@ -31,4 +32,4 @@ contract BaseAgent {
     function callTool(string memory toolName, string memory input) public returns (string memory) {
         return string(abi.encodePacked("Calling ", toolName, " with ", input));
     }
-solidity function sendMessage(address targetAgent, string memory message) public onlyOwner returns (string memory) { return string(abi.encodePacked("Message to ", address(targetAgent), ": ", message)); }}
+function sendMessage(address targetAgent, string memory message) public onlyOwner returns (uint) { agentMessages.push(message); return agentMessages.length - 1; // Return the index of the new message } function getMessages(address targetAgent) public view returns (string memory) { return agentMessages; }}
