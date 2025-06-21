@@ -12,6 +12,11 @@ contract BaseAgent {
         _;
     }
 
+    modifier onlyAuthorized(address caller) {
+        require(caller == owner || caller == address(this), "Not authorized");
+        _;
+    }
+
     constructor(string memory name) {
         owner = msg.sender;
         agentName = name;
@@ -37,11 +42,12 @@ contract BaseAgent {
         if (targetAgent == address(0)) {
             return false; // Fail if target address is invalid
         }
-        agentMessages[targetAgent] = message;
+        bytes32 encryptedMessage = keccak256(abi.encodePacked(message, block.timestamp)); // Encrypt message
+        agentMessages[targetAgent] = string(abi.encodePacked(encryptedMessage));
         return true; // Confirm success
     }
 
-    function getMessages(address targetAgent) public view returns (string memory) {
+    function getMessages(address targetAgent) public view onlyAuthorized(msg.sender) returns (string memory) {
         return agentMessages[targetAgent];
     }
 
