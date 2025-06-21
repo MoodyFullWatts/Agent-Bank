@@ -4,7 +4,7 @@ contract BaseAgent {
     string public agentName;
     address public owner;
     mapping(uint => string) public agentData;
-    mapping(address => string) public agentMessages; // Fixed syntax: curly braces, not parentheses
+    mapping(address => string) public agentMessages;
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
@@ -34,10 +34,10 @@ contract BaseAgent {
     }
 
     function sendMessage(address targetAgent, string memory message) public onlyOwner {
-        agentMessages[targetAgent] = message; // Store message for the target agent
+        agentMessages[targetAgent] = message;
     }
 
     function getMessages(address targetAgent) public view returns (string memory) {
-        return agentMessages[targetAgent]; // Return the message for the target agent
+        return agentMessages[targetAgent];
     }
 }
