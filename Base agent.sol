@@ -15,7 +15,7 @@ contract BaseAgent {
         agentName = name;
     }
 
-    function updateName(string memory newName) public {
+    function updateName(string memory newName) public only owner {
         agentName = newName;
     }
 
@@ -24,7 +24,7 @@ contract BaseAgent {
         return address(newAgent);
     }
 
-    function storeAgentData(uint id, string memory data) public {
+    function storeAgentData(uint id, string memory data) public only owner {
         agentData[id] = data;
     }
 
