@@ -31,4 +31,4 @@ contract BaseAgent {
     function callTool(string memory toolName, string memory input) public returns (string memory) {
         return string(abi.encodePacked("Calling ", toolName, " with ", input));
     }
-}
+solidity function sendMessage(address targetAgent, string memory message) public onlyOwner returns (string memory) { return string(abi.encodePacked("Message to ", address(targetAgent), ": ", message)); }}
