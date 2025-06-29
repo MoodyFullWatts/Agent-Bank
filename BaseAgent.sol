@@ -1,59 +1,33 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity ^0.8.0;
+// SPDX-License-License: MIT
+pragma solidity ^0.8.30;
+
+import "./SuperAgentBuilder.sol";
 
 contract BaseAgent {
-    string public agentName;
-    address public owner;
-    mapping(uint => string) public agentData;
-    mapping(address => string) public agentMessages;
+    ISuperAgentBuilder public superAgentBuilder;
+    address public client;
+    string public task;
+    bool public isActive;
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Not owner");
-        _;
+    event TaskExecuted(address indexed client, string task, bytes result);
+
+    constructor(address _superAgentBuilder, address _client, string memory _task) {
+        superAgentBuilder = ISuperAgentBuilder(_superAgentBuilder);
+        client = _client;
+        task = _task;
+        isActive = true;
     }
 
-    modifier onlyAuthorized(address caller) {
-        require(caller == owner || caller == address(this), "Not authorized");
-        _;
+    function executeTask(string memory query) external {
+        require(msg.sender == client, "Only client can execute");
+        require(isActive, "Agent is inactive");
+        
+        bytes memory result = superAgentBuilder.fetchExternalData(query);
+        emit TaskExecuted(client, task, result);
     }
 
-    constructor(string memory name) {
-        owner = msg.sender;
-        agentName = name;
-    }
-
-    function updateName(string memory newName) public onlyOwner {
-        agentName = newName;
-    }
-
-    function createNewAgent(string memory newAgentName) public onlyOwner returns (address) {
-        return address(new BaseAgent(newAgentName));
-    }
-
-    function storeAgentData(uint id, string memory data) public onlyOwner {
-        agentData[id] = data;
-    }
-
-    function callTool(string memory toolName, string memory input) public returns (string memory) {
-        return string(abi.encodePacked("Calling ", toolName, " with ", input));
-    }
-
-    function sendMessage(address targetAgent, string memory message) public onlyOwner returns (bool) {
-        if (targetAgent == address(0)) {
-            return false; // Fail if target address is invalid
-        }
-        bytes32 encryptedMessage = keccak256(abi.encodePacked(message, block.timestamp)); // Encrypt message
-        agentMessages[targetAgent] = string(abi.encodePacked(encryptedMessage));
-        return true; // Confirm success
-    }
-
-    function getMessages(address targetAgent) public view onlyAuthorized(msg.sender) returns (string memory) {
-        return agentMessages[targetAgent];
-    }
-
-    function fetchExternalData(uint256 requestId, string memory dataSource) public onlyOwner returns (uint256) {
-        // Placeholder: simulate fetching data from an oracle
-        agentData[requestId] = dataSource; // Store the data under the request ID
-        return requestId;
+    function deactivate() external {
+        require(msg.sender == client, "Only client can deactivate");
+        isActive = false;
     }
 }
