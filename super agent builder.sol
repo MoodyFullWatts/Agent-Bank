@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.30;
 
+import "./flare/IFlareContractRegistry.sol";
 import "./flare/ftso/userInterfaces/IFtso.sol";
 import "./flare/ftso/userInterfaces/IFtsoRegistry.sol";
 import "./flare/stateConnector/userInterfaces/IStateConnector.sol";
@@ -12,6 +13,7 @@ interface ISuperAgentBuilder {
 }
 
 contract SuperAgentBuilder is ISuperAgentBuilder {
+    IFlareContractRegistry public contractRegistry;
     IStateConnector public stateConnector;
     IFtso public ftso;
     IFtsoRegistry public ftsoRegistry;
@@ -21,9 +23,10 @@ contract SuperAgentBuilder is ISuperAgentBuilder {
     event AgentCreated(address indexed client, address agent, string task);
 
     constructor() {
-        stateConnector = IStateConnector(0x0c13aDA1C7143Cf0a0795FFaB93eEBb6FAD6e4e3); // Songbird State Connector
-        ftsoRegistry = IFtsoRegistry(0x45eD00B4B23e666Aef72B9730e56095AC7157F62); // Songbird FTSO Registry
-        ftso = IFtso(ftsoRegistry.getFtsoBySymbol("SGB/USD")); // Use SGB/USD for Songbird
+        contractRegistry = IFlareContractRegistry(0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019);
+        stateConnector = IStateConnector(contractRegistry.getContractAddressByName("StateConnector"));
+        ftsoRegistry = IFtsoRegistry(contractRegistry.getContractAddressByName("FtsoV2"));
+        ftso = IFtso(ftsoRegistry.getFtsoBySymbol("SGB/USD"));
         owner = msg.sender;
     }
 
@@ -40,7 +43,7 @@ contract SuperAgentBuilder is ISuperAgentBuilder {
     }
 
     function fetchExternalData(string memory query) public returns (bytes memory) {
-        return stateConnector.requestAttestation(query);
+        return stateConnector.requestAttestation(abi.encode(query));
     }
 
     function getPriceFeed(address asset) public view returns (uint256) {
