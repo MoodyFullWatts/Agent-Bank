@@ -20,13 +20,22 @@ contract SuperAgentBuilder is ISuperAgentBuilder {
     mapping(address => address) public clientToAgent;
     address public owner;
 
+    // Precomputed keccak256 hashes for contract names
+    bytes32 private constant STATE_CONNECTOR_HASH = keccak256("StateConnector");
+    bytes32 private constant FTSO_V2_HASH = keccak256("FtsoV2");
+
     event AgentCreated(address indexed client, address agent, string task);
 
-    constructor() {
-        contractRegistry = IFlareContractRegistry(0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019);
-        stateConnector = IStateConnector(contractRegistry.getContractAddressByName("StateConnector"));
-        ftsoRegistry = IFtsoRegistry(contractRegistry.getContractAddressByName("FtsoV2"));
-        ftso = IFtso(ftsoRegistry.getFtsoBySymbol("SGB/USD"));
+    constructor(address _contractRegistry) {
+        contractRegistry = IFlareContractRegistry(_contractRegistry);
+        // Batch fetch StateConnector and FtsoV2 addresses
+        bytes32[] memory nameHashes = new bytes32[](2);
+        nameHashes[0] = STATE_CONNECTOR_HASH;
+        nameHashes[1] = FTSO_V2_HASH;
+        address[] memory addresses = contractRegistry.getContractAddressesByHash(nameHashes);
+        stateConnector = IStateConnector(addresses[0]);
+        ftsoRegistry = IFtsoRegistry(addresses[1]);
+        ftso = IFtso(ftsoRegistry.getFtsoBySymbol("SGB/USD")); // Songbird SGB/USD feed
         owner = msg.sender;
     }
 
