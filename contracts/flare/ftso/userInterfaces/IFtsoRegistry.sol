@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0 <0.9.0;
+pragma solidity >=0.7.6;
 
-interface IFtsoRegistry {
-    function getFtsoBySymbol(string calldata _symbol) external view returns (address);
-    // Additional registry functions can be added as needed
+interface IFlareContractRegistry {
+    function getContractAddressByName(string calldata _name) external view returns (address);
+    function getContractAddressByHash(bytes32 _nameHash) external view returns (address);
+    function getContractAddressesByHash(bytes32[] calldata _nameHashes) external view returns (address[] memory);
 }
