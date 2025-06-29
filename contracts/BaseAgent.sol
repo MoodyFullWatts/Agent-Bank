@@ -3,7 +3,7 @@ pragma solidity ^0.8.30;
 
 import "./SuperAgentBuilder.sol";
 
-contract BasicAgent {
+contract BaseAgent {
     ISuperAgentBuilder public superAgentBuilder;
     address public client;
     string public task;
