@@ -20,10 +20,10 @@ contract SuperAgentBuilder is ISuperAgentBuilder {
 
     event AgentCreated(address indexed client, address agent, string task);
 
-    constructor(address _stateConnector, address _ftsoRegistry) {
-        stateConnector = IStateConnector(_stateConnector);
-        ftsoRegistry = IFtsoRegistry(_ftsoRegistry);
-        ftso = IFtso(ftsoRegistry.getFtsoBySymbol("FLR/USD")); // Example: FLR/USD feed
+    constructor() {
+        stateConnector = IStateConnector(0x0c13aDA1C7143Cf0a0795FFaB93eEBb6FAD6e4e3); // Songbird State Connector
+        ftsoRegistry = IFtsoRegistry(0x45eD00B4B23e666Aef72B9730e56095AC7157F62); // Songbird FTSO Registry
+        ftso = IFtso(ftsoRegistry.getFtsoBySymbol("SGB/USD")); // Use SGB/USD for Songbird
         owner = msg.sender;
     }
 
